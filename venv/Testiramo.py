@@ -11,8 +11,8 @@ from scipy.spatial import distance
 
 from scipy.spatial import ConvexHull, convex_hull_plot_2d
 
+test za laptopa
 
-// znaci da sad rad?
 points = np.random.rand(10, 2)                                                                                         # 10 random points in 2-D
 
 points = np.array([[0.36678149, 0.38106586],

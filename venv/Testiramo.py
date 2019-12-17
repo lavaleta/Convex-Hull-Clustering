@@ -11,7 +11,6 @@ from scipy.spatial import distance
 
 from scipy.spatial import ConvexHull, convex_hull_plot_2d
 
-test za laptopa
 
 points = np.random.rand(10, 2)                                                                                         # 10 random points in 2-D
 
@@ -41,6 +40,8 @@ what_hull = np.array([2, 1])
 normal = np.empty([0,2])
 extreme_left_hull = np.empty([0,2])
 extreme_right_hull = np.empty([0,2])
+x_green = 0
+y_green = 0
 # plt.plot(points[:,0], points[:,1], 'o')
 #
 # plt.plot([0.39678149, 0.64982347], [0.40106586, 0.40332725])
@@ -160,18 +161,23 @@ while i < points.size/2:                                                        
 
                     location = ((normal[0] - points[i, 0]) * (hull_left.points[iter, 1] - points[i, 1])
                                 - (normal[1] - points[i, 1]) * (hull_left.points[iter, 0] - points[i, 0]))
-
+                    # if j==5: print(hull_left.points[iter], location, len_on_line)
                     if location < 0:
                         if min_right_LHULL > len_on_line:
-                            min_right_LRHULL = len_on_line
+                            min_right_LHULL = len_on_line
                             index_right_of_line = iter
+                            # if j==5: print("ovo je onaj IF", hull_left.points[iter], min_right_LHULL, len_on_line)
                     if location > 0:
+                        # if j == 5: print(hull_left.points[iter], "Kako smo ovde usli")
                         if max_left_LHULL < len_on_line:
                             max_left_LHULL = len_on_line
                             index_left_of_line = iter
+                # print(index_left_of_line, "ovo radi? what")
                 index_curr_left = index_left_of_line
                 if index_left_of_line == -1: index_curr_left = index_right_of_line # ovo mozda mora na kraju
 
+                # if j==5: print(hull_left.points[index_right_of_line])
+                # if j==5: breakpoint()
 
                 index_curr_right = -1
                 index_left_of_line = -1
@@ -209,13 +215,13 @@ while i < points.size/2:                                                        
                         break
 
                 test_iterator = 0
-                print(hull_left.points[index_curr_left], hull_right.points[index_curr_right])
-                plt.plot(hull_left.points[index_curr_left, 0], hull_left.points[index_curr_left, 1],
-                         '-o', color='green')
-                plt.plot(hull_right.points[index_curr_right, 0], hull_right.points[index_curr_right, 1],
-                         '-o', color='green')
+                # # print(hull_left.points[index_curr_left], hull_right.points[index_curr_right])
+                # plt.plot(hull_left.points[index_curr_left, 0], hull_left.points[index_curr_left, 1],
+                #          '-o', color='green')
+                # plt.plot(hull_right.points[index_curr_right, 0], hull_right.points[index_curr_right, 1],
+                #          '-o', color='green')
                 while 1:
-                    break
+                    # break
                     k = hull_left.vertices[(vert_index_left+1)%len(hull_left.vertices)]
 
 
@@ -264,8 +270,10 @@ while i < points.size/2:                                                        
 
                             else:
                                 # if j == 5: print: print(hull_left.points[index_curr_left], dist_to_next_two)
-                                # plt.plot(hull_left.points[index_curr_left, 0], hull_left.points[index_curr_left, 1],
-                                #          '-o', color='green')
+                                plt.plot(hull_left.points[index_curr_left, 0], hull_left.points[index_curr_left, 1],
+                                         '-o', color='green')
+                                plt.plot(hull_right.points[index_curr_right, 0]+0.01, hull_right.points[index_curr_right, 1],
+                                         '-o', color='green')
                                 # print("ovo je najkraci", dist_curr, hull_left.points[index_curr_left], hull_right.points[index_curr_right], str(i), str(j))
                                 break
                     else:
@@ -284,7 +292,10 @@ while i < points.size/2:                                                        
                             else:
                                 index_curr_right = hull_right.vertices[vert_index_right]
                         else:
-                            # plt.plot(hull_left.points[index_curr_left,0], hull_left.points[index_curr_left,1], '-o', color='green')
+                            plt.plot(hull_left.points[index_curr_left,0], hull_left.points[index_curr_left,1], '-o', color='green')
+                            plt.plot(hull_right.points[index_curr_right, 0] + 0.01,
+                                     hull_right.points[index_curr_right, 1],
+                                     '-o', color='green')
                             # print(dist_curr, hull_left.points[index_curr_left], hull_right.points[index_curr_right],
                             #       "Ovo je najkrace takodje...", str(i), str(j))
                             break
@@ -300,8 +311,8 @@ while i < points.size/2:                                                        
         plt.plot(x_array, y_array, color='red')
         plt.axis([0, 1, 0, 1])
         plt.savefig('Convex hulls/plot' + str(i) + str(j) + '-right.png')
-        plt.show()
-        # print(str(i), str(j))
+        # plt.show()
+        # print(str(), str(j))
 
         plt.clf()
         # if(j==5): breakpoint()

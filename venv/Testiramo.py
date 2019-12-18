@@ -24,8 +24,6 @@ points = np.array([[0.36678149, 0.38106586],
         [0.52702399, 0.02006482],
         [0.36317455, 0.76319172],
         [0.78053307, 0.33781986]])
-# [0.85628276, 0.93774736]  zamenjeno je mosto drugog i treceg clana
-# [0.52702399, 0.02006482]
 # points = np.random.rand(10, 2)
 
 i = 0
@@ -42,13 +40,6 @@ extreme_left_hull = np.empty([0,2])
 extreme_right_hull = np.empty([0,2])
 x_green = 0
 y_green = 0
-# plt.plot(points[:,0], points[:,1], 'o')
-#
-# plt.plot([0.39678149, 0.64982347], [0.40106586, 0.40332725])
-# print(points[0:2,0], points[0:2,1])
-# plt.show()
-#
-# breakpoint()
 
 while i < points.size/2:                                                                                               # iterating through all points
     j = i+1
@@ -68,11 +59,9 @@ while i < points.size/2:                                                        
             location = ((points[j,0]-points[i,0])*(points[k,1]-points[i,1])                                            # we use the cross product to see where the point 'k' is in relation to the line segment
                         - (points[j,1]-points[i,1])*(points[k,0]-points[i,0]))
 
-            if location > 0:                                                                                           # if location > 0 then the point is to the left of the line segment
-                # print(points[k], "ovo je levo od", points[i], points[j])
+            if location > 0:
                 points_left = np.append(points_left, [points[k]], axis=0)
             elif location < 0:
-                # points_right[pom] =  points[k]
                 points_right = np.append(points_right, [points[k]], axis=0)
                 pom += 1
             else:                                                                                                      # if location > 0 then the point is on the line segment (it is collinear)
@@ -102,14 +91,7 @@ while i < points.size/2:                                                        
                     plt.plot(points_right[simplex, 0], points_right[simplex, 1], 'k-')
             left_right+=1
 
-            # if(points_left.size / 2 > 0 and points_right.size / 2 > 2):
-            #     iterator = 0
-            #     print("ovo radi")
-            #     # while iterator == 0:
-            #     for i in range(len(hull_right.vertices)):
-            #         print(len(hull_right.vertices))
-        # print(hull_left.points)
-        # print(hull_left.vertices)
+
         x_array = np.array(points[i][0])
         x_array = np.append(x_array, points[j][0])
         y_array = np.array(points[i][1])
@@ -215,91 +197,187 @@ while i < points.size/2:                                                        
                         break
 
                 test_iterator = 0
-                # # print(hull_left.points[index_curr_left], hull_right.points[index_curr_right])
+                # print(hull_left.points[index_curr_left], hull_right.points[index_curr_right])
                 # plt.plot(hull_left.points[index_curr_left, 0], hull_left.points[index_curr_left, 1],
                 #          '-o', color='green')
                 # plt.plot(hull_right.points[index_curr_right, 0], hull_right.points[index_curr_right, 1],
                 #          '-o', color='green')
+                # if j == 5: print(hull_left.points[index_curr_left],  hull_right.points[index_curr_right], i )
+                local_min = 1
+                flag_left = 0
                 while 1:
+                    # print(i, j, hull_left.points[index_curr_left], hull_right.points[index_curr_right])
                     # break
-                    k = hull_left.vertices[(vert_index_left+1)%len(hull_left.vertices)]
+                    p = -1
+                    if vert_index_right - 1 < 0:
+                        p = hull_right.vertices[len(hull_right.vertices) - 1]
+                    else:
+                        p = hull_right.vertices[vert_index_right - 1]
 
-
-                    location = ((hull_left.points[index_curr_left, 0] - hull_right.points[index_curr_right, 0])*
-                                 (hull_left.points[k, 1]  - hull_right.points[index_curr_right, 1])
+                    location = ((hull_left.points[index_curr_left, 0] - hull_right.points[index_curr_right, 0]) *
+                                (hull_right.points[p, 1] - hull_right.points[index_curr_right, 1])
                                 - (hull_left.points[index_curr_left, 1] - hull_right.points[index_curr_right, 1])
-                                 * (hull_left.points[k, 0]  - hull_right.points[index_curr_right, 1]))
-                    # if j==7:
-                    #     print(str(i), str(j))
-                    #     print(hull_left.points)
-                    #     print("Iteriramo\n", hull_left.points[index_curr_left], hull_right.points[index_curr_right])
-                    #     breakpoint()
+                                * (hull_right.points[p, 0] - hull_right.points[index_curr_right, 1]))
 
-                    dist_curr = math.sqrt(
-                        math.pow(hull_left.points[index_curr_left, 0] - hull_right.points[index_curr_right, 0], 2) +
-                        math.pow(hull_left.points[index_curr_left, 1] - hull_right.points[index_curr_right, 1], 2))
+                    if location:
+                        # if flag_left > 0: break
+                        k = hull_left.vertices[(vert_index_left + 1) % len(hull_left.vertices)]
+                        location = ((hull_left.points[index_curr_left, 0] - hull_right.points[index_curr_right, 0]) *
+                                    (hull_left.points[k, 1] - hull_right.points[index_curr_right, 1])
+                                    - (hull_left.points[index_curr_left, 1] - hull_right.points[index_curr_right, 1])
+                                    * (hull_left.points[k, 0] - hull_right.points[index_curr_right, 1]))
 
-                    if location < 0:
-                        dist_to_next = math.sqrt(math.pow(hull_left.points[k, 0] - hull_right.points[index_curr_right,0],2) +
-                                                 math.pow(hull_left.points[k, 1] - hull_right.points[index_curr_right,1],2))
-                        # if j==5: print(dist_to_next, dist_curr)
+                        # if location > 0: flag_left +=1
+                        flag_left = 1
+
+                        dist_curr = math.sqrt(
+                            math.pow(hull_left.points[index_curr_left, 0] - hull_right.points[index_curr_right, 0], 2) +
+                            math.pow(hull_left.points[index_curr_left, 1] - hull_right.points[index_curr_right, 1], 2))
+
+                        dist_to_next = math.sqrt(
+                            math.pow(hull_left.points[k, 0] - hull_right.points[index_curr_right, 0], 2) +
+                            math.pow(hull_left.points[k, 1] - hull_right.points[index_curr_right, 1], 2))
+
                         if dist_curr > dist_to_next:
+                            # if j==3: print("print 1")
                             vert_index_left+=1
                             index_curr_left = hull_left.vertices[vert_index_left % len(hull_left.vertices)]
                         else:
-                            # if j==5: print("zasto sad nisi usao ovde")
+                            # if j == 3: print("print 2")
                             p = -1
                             if vert_index_right - 1 < 0:
-                                p = hull_right.vertices[len(hull_right.vertices)-1]
+                                p = hull_right.vertices[len(hull_right.vertices) - 1]
                             else:
                                 p = hull_right.vertices[vert_index_right - 1]
-
-                            dist_to_next_two = math.sqrt(
+                            dist_to_next = math.sqrt(
                                 math.pow(hull_left.points[index_curr_left, 0] - hull_right.points[p, 0], 2) +
                                 math.pow(hull_left.points[index_curr_left, 1] - hull_right.points[p, 1], 2))
-                            if dist_curr > dist_to_next_two:
-                                # if j==5: print("ovo bi trebalo da je resilo problem", hull_left.points[index_curr_left], hull_right.points[p])
+
+                            if dist_curr > dist_to_next:
+                                # if j == 3: print("print 3")
                                 vert_index_right -= 1
                                 if vert_index_right < 0:
-                                    index_curr_right = hull_right.vertices[len(hull_right.vertices) - 1]
+                                    vert_index_right = len(hull_right.vertices) - 1
+                                    index_curr_right = hull_right.vertices[vert_index_right]
                                 else:
                                     index_curr_right = hull_right.vertices[vert_index_right]
-                                # if j == 5: print("Sta se desava", hull_left.points[index_curr_left], hull_right.points[index_curr_right])
-
-
-
                             else:
-                                # if j == 5: print: print(hull_left.points[index_curr_left], dist_to_next_two)
-                                plt.plot(hull_left.points[index_curr_left, 0], hull_left.points[index_curr_left, 1],
-                                         '-o', color='green')
-                                plt.plot(hull_right.points[index_curr_right, 0]+0.01, hull_right.points[index_curr_right, 1],
-                                         '-o', color='green')
-                                # print("ovo je najkraci", dist_curr, hull_left.points[index_curr_left], hull_right.points[index_curr_right], str(i), str(j))
-                                break
+                                # if j == 3: print("print 4")
+                                dist_to_next = math.sqrt(
+                                    math.pow(hull_left.points[k, 0] - hull_right.points[p, 0], 2) +
+                                    math.pow(hull_left.points[k, 1] - hull_right.points[p, 1], 2))
+
+                                if dist_curr < dist_to_next:
+                                    # if j == 3: print("print 5")
+                                    print("ovo je kraj", dist_curr, i, j)
+                                    print(hull_left.points[index_curr_left], hull_right.points[index_curr_right])
+                                    plt.plot(hull_left.points[index_curr_left, 0], hull_left.points[index_curr_left, 1],
+                                             '-o', color='green')
+                                    plt.plot(hull_right.points[index_curr_right, 0],
+                                             hull_right.points[index_curr_right, 1],
+                                             '-o', color='green')
+                                    break
+                                else:
+                                    # if j == 3: print("print 6")
+                                    vert_index_right -= 1
+                                    if vert_index_right < 0:
+                                        vert_index_right = len(hull_right.vertices) - 1
+                                        index_curr_right = hull_right.vertices[vert_index_right]
+                                    else:
+                                        index_curr_right = hull_right.vertices[vert_index_right]
+                                    vert_index_left += 1
+                                    index_curr_left = hull_left.vertices[vert_index_left % len(hull_left.vertices)]
                     else:
-                        p = -1
-                        if vert_index_right - 1 < 0:
-                            p = hull_right.vertices[len(hull_right.vertices) - 1]
-                        else:
-                            p = hull_right.vertices[vert_index_right - 1]
-                            dist_to_next_two = math.sqrt(
-                                math.pow(hull_left.points[index_curr_left, 0] - hull_right.points[p, 0], 2) +
-                                math.pow(hull_left.points[index_curr_left, 1] - hull_right.points[p, 1], 2))
-                        if dist_curr > dist_to_next_two:
-                            vert_index_right -= 1
-                            if vert_index_right < 0:
-                                index_curr_right = hull_right.vertices[len(hull_right.vertices) - 1]
-                            else:
-                                index_curr_right = hull_right.vertices[vert_index_right]
-                        else:
-                            plt.plot(hull_left.points[index_curr_left,0], hull_left.points[index_curr_left,1], '-o', color='green')
-                            plt.plot(hull_right.points[index_curr_right, 0] + 0.01,
-                                     hull_right.points[index_curr_right, 1],
-                                     '-o', color='green')
-                            # print(dist_curr, hull_left.points[index_curr_left], hull_right.points[index_curr_right],
-                            #       "Ovo je najkrace takodje...", str(i), str(j))
-                            break
-                    test_iterator += 1
+                        if flag_left == 1:
+                            continue
+                        # vert_index_right -= 1
+                        # if vert_index_right < 0:
+                        #     index_curr_right = hull_right.vertices[len(hull_right.vertices) - 1]
+                        #     vert_index_right = len(hull_right.vertices) - 1
+                        # else:
+                        #     index_curr_right = hull_right.vertices[vert_index_right]
+
+                    # //////////////////////////////////////////////////////////////////////////
+                    #
+                    # location = ((hull_left.points[index_curr_left, 0] - hull_right.points[index_curr_right, 0])*
+                    #              (hull_left.points[k, 1]  - hull_right.points[index_curr_right, 1])
+                    #             - (hull_left.points[index_curr_left, 1] - hull_right.points[index_curr_right, 1])
+                    #              * (hull_left.points[k, 0]  - hull_right.points[index_curr_right, 1]))
+                    #
+                    # dist_curr = math.sqrt(
+                    #     math.pow(hull_left.points[index_curr_left, 0] - hull_right.points[index_curr_right, 0], 2) +
+                    #     math.pow(hull_left.points[index_curr_left, 1] - hull_right.points[index_curr_right, 1], 2))
+                    #
+                    # if location < 0:
+                    #     if j == 5: print("print 1")
+                    #     dist_to_next = math.sqrt(math.pow(hull_left.points[k, 0] - hull_right.points[index_curr_right,0],2) +
+                    #                              math.pow(hull_left.points[k, 1] - hull_right.points[index_curr_right,1],2))
+                    #     # if j==5: print(dist_to_next, dist_curr)
+                    #     if dist_curr > dist_to_next:
+                    #         vert_index_left+=1
+                    #         index_curr_left = hull_left.vertices[vert_index_left % len(hull_left.vertices)]
+                    #         if j == 5: print("print 2", hull_left.points[index_curr_left])
+                    #     else:
+                    #         if j == 5: print("print 3")
+                    #         # if j==5: print("zasto sad nisi usao ovde")
+                    #         p = -1
+                    #         if vert_index_right - 1 < 0:
+                    #             p = hull_right.vertices[len(hull_right.vertices)-1]
+                    #         else:
+                    #             p = hull_right.vertices[vert_index_right - 1]
+                    #
+                    #         dist_to_next_two = math.sqrt(
+                    #             math.pow(hull_left.points[index_curr_left, 0] - hull_right.points[p, 0], 2) +
+                    #             math.pow(hull_left.points[index_curr_left, 1] - hull_right.points[p, 1], 2))
+                    #         if dist_curr > dist_to_next_two:
+                    #             if j == 5: print("print 4", hull_left.points[index_curr_left])
+                    #             # if j==5: print("ovo bi trebalo da je resilo problem", hull_left.points[index_curr_left], hull_right.points[p])
+                    #             vert_index_right -= 1
+                    #             if vert_index_right < 0:
+                    #                 index_curr_right = hull_right.vertices[len(hull_right.vertices) - 1]
+                    #                 vert_index_right = len(hull_right.vertices) - 1
+                    #             else:
+                    #                 index_curr_right = hull_right.vertices[vert_index_right]
+                    #             # if j == 5: print("Sta se desava", hull_left.points[index_curr_left], hull_right.points[index_curr_right])
+                    #
+                    #
+                    #
+                    #         else:
+                    #             if j == 5: print("print 5")
+                    #             # if j == 5: print: print(hull_left.points[index_curr_left], dist_to_next_two)
+                    #             plt.plot(hull_left.points[index_curr_left, 0], hull_left.points[index_curr_left, 1],
+                    #                      '-o', color='green')
+                    #             plt.plot(hull_right.points[index_curr_right, 0]+0.01, hull_right.points[index_curr_right, 1],
+                    #                      '-o', color='green')
+                    #             # print("ovo je najkraci", dist_curr, hull_left.points[index_curr_left], hull_right.points[index_curr_right], str(i), str(j))
+                    #             break
+                    # else:
+                    #     # if j == 5: print("print 6")
+                    #     # p = -1
+                    #     # if vert_index_right - 1 < 0:
+                    #     #     p = hull_right.vertices[len(hull_right.vertices) - 1]
+                    #     # else:
+                    #     #     p = hull_right.vertices[vert_index_right - 1]
+                    #     #     dist_to_next_two = math.sqrt(
+                    #     #         math.pow(hull_left.points[index_curr_left, 0] - hull_right.points[p, 0], 2) +
+                    #     #         math.pow(hull_left.points[index_curr_left, 1] - hull_right.points[p, 1], 2))
+                    #     if dist_curr > dist_to_next_two:
+                    #         if j == 5: print("print 7")
+                    #         vert_index_right -= 1
+                    #         if vert_index_right < 0:
+                    #             index_curr_right = hull_right.vertices[len(hull_right.vertices) - 1]
+                    #         else:
+                    #             index_curr_right = hull_right.vertices[vert_index_right]
+                    #     else:
+                    #         if j == 5: print("print 8")
+                    #         plt.plot(hull_left.points[index_curr_left,0], hull_left.points[index_curr_left,1], '-o', color='green')
+                    #         plt.plot(hull_right.points[index_curr_right, 0] + 0.01,
+                    #                  hull_right.points[index_curr_right, 1],
+                    #                  '-o', color='green')
+                    #         # print(dist_curr, hull_left.points[index_curr_left], hull_right.points[index_curr_right],
+                    #         #       "Ovo je najkrace takodje...", str(i), str(j))
+                    #         break
+                    # test_iterator += 1
 
 
 
@@ -311,7 +389,7 @@ while i < points.size/2:                                                        
         plt.plot(x_array, y_array, color='red')
         plt.axis([0, 1, 0, 1])
         plt.savefig('Convex hulls/plot' + str(i) + str(j) + '-right.png')
-        # plt.show()
+        plt.show()
         # print(str(), str(j))
 
         plt.clf()
